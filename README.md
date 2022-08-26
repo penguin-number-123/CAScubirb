@@ -1,7 +1,7 @@
 # Cascubirb
 The birbest of all calculators and CASes
 
-#Goals
+##Goals
 * Fast
 * Accurate
 * General Purpose
@@ -9,7 +9,7 @@ The birbest of all calculators and CASes
 * Works for incredibly large numbers (Upwards of 10^^^2^64)
 * Birbin' (Will be approved by local birbs)
 
-#Roadmap 
+##Roadmap 
 Current: -1
 Kilometerstone 0: Finish python arbitary precision and large number arthimatic
 Kilometerstone 1: Port library to Rust
@@ -20,6 +20,6 @@ Kilometerstone 5: Mathematical induction, etc
 Kilometerstone 6: Graphing (Output to png/text based
 '''More to come.'''
 
-#Development
+##Development
 0.0.0 Initial Commit and upload written python files
 
