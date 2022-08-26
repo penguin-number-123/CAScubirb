@@ -11,7 +11,7 @@ class bigfloat:
         self.prec = prec
     
     def __str__(self):
-        return ("-" if self.sign == -1 else "")+("0" if not len(self.front) or self.front == [0]*self.prec else "".join(str(x) for x in self.front))+(".0" if not len(self.back) or self.back == [0]*self.prec else "."+"".join(str(x) for x in self.back))
+        return ("-" if self.sign == -1 else "")+("0" if not len(self.front) or self.front == [0]*self.prec else "".join(str(x) for x in self.front))+(".0" if not len(self.back) or self.back == [0]*self.prec else "."+re.sub("0+(?![^1-9]*[1-9])","","".join(str(x) for x in self.back)))
     def parse(self,string):
         sign = 0
         if(string[0] == "-"):
@@ -26,22 +26,24 @@ class bigfloat:
             front = [int(x) for x in list(treated.split(".")[0])]
             back = [int(x) for x in list(treated.split(".")[1])]
             prec = max(len(front),len(back))
-            front.insert(-1,[0]*(len(front)-prec))
-            back.insert(-1,[0]*(len(back)-prec))
+            front+= [0]*(prec-len(front))
+            back+= ([0]*(prec-len(back)))
+            
         elif len(re.findall("\.",treated)) == 0:
             front = [int(x) for x in list(treated)]
             prec = len(front)
             back = [0]*prec
-        
+        front = [x for x in front if x != []]
+        back = [x for x in back if x !=[]]
         return sign,front,back,prec
     def fix(self,other):
         if self.prec > other.prec:
-            other.front.extend([0]*(self.prec-other.prec))
-            other.back.extend([0]*(self.prec-other.prec))
+            other.front= [0]*(self.prec-other.prec) + self.front
+            other.back+=[0]*(self.prec-other.prec)
             other.prec=self.prec
         elif other.prec>self.prec:
-            self.front.extend([0]*(other.prec-self.prec))
-            self.back.extend([0]*(other.prec-self.prec))
+            self.front=[0]*(other.prec-self.prec)+self.front
+            self.back+= [0]*(other.prec-self.prec)
             self.prec=other.prec
     def false_div(a,x):
         return bigfloat("0."+"0"*(x-1)+str(a))
@@ -61,6 +63,8 @@ class bigfloat:
                 elif other.back[i] > self.back[i]:
                     return False
             return False
+    def __lt__(self,other):
+        return not self > other
     def __add__(self,other):
         self.fix(other)
         if(self.sign == other.sign):
@@ -74,33 +78,59 @@ class bigfloat:
                 elif carry>0:
                     self.front[-1]+=carry
                 rb.append(newval)
+            if carry > 0:
+                rf.append(carry)
             rb.reverse()
             rf = []
             for i in list(reversed(range(len(self.front)))):
                 newval = self.front[i]+other.front[i]
                 carry = newval//10
                 newval = newval%10
-                print(carry,newval)
+                
                 if i-1 >=0 and carry >0:
                     self.front[i-1]+=carry
                 elif carry>0:
                     self.front.insert(0,carry)
                 rf.append(newval)
-            if i-1 >=0 and carry >0:
-                    self.front[i-1]+=carry
-            elif carry>0:
-                    self.front.insert(0,carry)
-            rf.append(newval)
+            if carry > 0:
+                rf.append(carry)
+            
             rf.reverse()
         return bigfloat(("-" if self.sign == -1 else "") +"".join(str(x) for x in rf)+"."+"".join(str(x) for x in rb))
     def __sub__(self,other):
         self.fix(other)
         if self.sign == other.sign and self.sign == 0:
-            rb = []
-            for i in range(len(self.front)):
+            if self>other:
+                rb = []
+                for i in list(reversed(range(len(self.back)))):
+                    newval = self.back[i]-other.back[i]
+                    borrow = newval//10
+                    print(newval, borrow)
+                    newval =  newval-borrow*10
+                    print(newval)
+                    if i-1 >=0:
+                        self.back[i-1] +=borrow
+                    else:
+                        self.front[-1] +=borrow
+                    rb.append(newval)
+                rf = []
+                print(self.front)
+                for i in list(reversed(range(len(self.front)))):
+                    newval = self.front[i] - other.front[i]
+                    borrow = newval//10
+                    newval = newval-borrow*10
+                    if i-1 >=0:
+                        self.front[i-1]+= borrow
+                        
+                    
+                    rf.append(newval)
+                rb.reverse()
+                rf.reverse()
+                return bigfloat("+"+"".join(str(x) for x in rf)+"."+"".join(str(x) for x in rb))
+            else:
                 pass
 
-print(bigfloat("12345678.9")-bigfloat("98765432.1"))
+print(bigfloat("650.321")-bigfloat("123.456"))
 class Large:
     def __init__(self,sign,value,m=1):
         self.sign = sign
