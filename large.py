@@ -2,8 +2,7 @@ import math
 from decimal import *
 import re
 class bigfloat:
-    def __init__(self,string):
-        sign,front,back,prec = self.parse(string)
+    def __init__(self,sign,front,back,prec):
         
         self.sign = sign
         self.front = front
@@ -12,30 +11,7 @@ class bigfloat:
     
     def __str__(self):
         return ("-" if self.sign == -1 else "")+("0" if not len(self.front) or self.front == [0]*self.prec else "".join(str(x) for x in self.front))+(".0" if not len(self.back) or self.back == [0]*self.prec else "."+re.sub("0+(?![^1-9]*[1-9])","","".join(str(x) for x in self.back)))
-    def parse(self,string):
-        sign = 0
-        if(string[0] == "-"):
-            sign = -1
-        else:
-            sign = 0
-        treated = string.replace("-","").replace("+","")
-        front = []
-        back = []
-        prec = 0
-        if len(re.findall("\.",treated)) == 1:
-            front = [int(x) for x in list(treated.split(".")[0])]
-            back = [int(x) for x in list(treated.split(".")[1])]
-            prec = max(len(front),len(back))
-            front+= [0]*(prec-len(front))
-            back+= ([0]*(prec-len(back)))
-            
-        elif len(re.findall("\.",treated)) == 0:
-            front = [int(x) for x in list(treated)]
-            prec = len(front)
-            back = [0]*prec
-        front = [x for x in front if x != []]
-        back = [x for x in back if x !=[]]
-        return sign,front,back,prec
+    
     def fix(self,other):
         if self.prec > other.prec:
             other.front= [0]*(self.prec-other.prec) + self.front
@@ -96,7 +72,7 @@ class bigfloat:
                 rf.append(carry)
             
             rf.reverse()
-        return bigfloat(("-" if self.sign == -1 else "") +"".join(str(x) for x in rf)+"."+"".join(str(x) for x in rb))
+        return bigfloat(self.sign,rf,rb,self.prec)
     def __sub__(self,other):
         self.fix(other)
         if self.sign == other.sign and self.sign == 0:
@@ -105,32 +81,53 @@ class bigfloat:
                 for i in list(reversed(range(len(self.back)))):
                     newval = self.back[i]-other.back[i]
                     borrow = newval//10
-                    print(newval, borrow)
                     newval =  newval-borrow*10
-                    print(newval)
                     if i-1 >=0:
                         self.back[i-1] +=borrow
                     else:
                         self.front[-1] +=borrow
                     rb.append(newval)
                 rf = []
-                print(self.front)
                 for i in list(reversed(range(len(self.front)))):
                     newval = self.front[i] - other.front[i]
                     borrow = newval//10
                     newval = newval-borrow*10
                     if i-1 >=0:
                         self.front[i-1]+= borrow
-                        
-                    
                     rf.append(newval)
                 rb.reverse()
                 rf.reverse()
-                return bigfloat("+"+"".join(str(x) for x in rf)+"."+"".join(str(x) for x in rb))
+                return bigfloat(0,rf,rb,self.prec)
+            elif self<other:
+                new = other-self
+                return bigfloat(-1,new.front,new.back,new.prec)
             else:
                 pass
-
-print(bigfloat("650.321")-bigfloat("123.456"))
+def parse(string):
+        sign = 0
+        if(string[0] == "-"):
+            sign = -1
+        else:
+            sign = 0
+        treated = string.replace("-","").replace("+","")
+        front = []
+        back = []
+        prec = 0
+        if len(re.findall("\.",treated)) == 1:
+            front = [int(x) for x in list(treated.split(".")[0])]
+            back = [int(x) for x in list(treated.split(".")[1])]
+            prec = max(len(front),len(back))
+            front+= [0]*(prec-len(front))
+            back+= ([0]*(prec-len(back)))
+            
+        elif len(re.findall("\.",treated)) == 0:
+            front = [int(x) for x in list(treated)]
+            prec = len(front)
+            back = [0]*prec
+        front = [x for x in front if x != []]
+        back = [x for x in back if x !=[]]
+        return bigfloat(sign,front,back,prec)
+print(parse("423789412847491274.321")-parse("1234234.45234236"))
 class Large:
     def __init__(self,sign,value,m=1):
         self.sign = sign
