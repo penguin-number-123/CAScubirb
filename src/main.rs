@@ -1,3 +1,4 @@
 fn main() {
-    println!("Hello, world!");
+    println!("CAScubirb CLI Interfact - V0.0.0 ");
+
 }

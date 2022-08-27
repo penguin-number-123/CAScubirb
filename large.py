@@ -10,7 +10,7 @@ class bigfloat:
         self.prec = prec
     
     def __str__(self):
-        return ("-" if self.sign == -1 else "")+("0" if not len(self.front) or self.front == [0]*self.prec else "".join(str(x) for x in self.front))+(".0" if not len(self.back) or self.back == [0]*self.prec else "."+re.sub("0+(?![^1-9]*[1-9])","","".join(str(x) for x in self.back)))
+        return ("-" if self.sign == -1 else "")+("0" if not len(self.front) or self.front == [0]*self.prec else re.sub("^[0+]*","","".join(str(x) for x in self.front)))+(".0" if not len(self.back) or self.back == [0]*self.prec else "."+re.sub("0+(?![^1-9]*[1-9])","","".join(str(x) for x in self.back)))
     
     def fix(self,other):
         if self.prec > other.prec:
@@ -73,6 +73,36 @@ class bigfloat:
             
             rf.reverse()
         return bigfloat(self.sign,rf,rb,self.prec)
+    def tosdigit(a):
+        return a.sign*a.front[-1] #only for -9..9
+    def pow10(self,pow):
+        olen = len(self.back)
+        newback = self.back + [0]*pow
+        extra = newback[0:len(newback)-olen]
+        final = newback[len(newback)-olen:-1]
+        self.front += extra
+        self.back = final
+        return self
+
+    def smul(self,a):
+        rb = []
+        carry = 0//10
+        for i in list(reversed(range(len(self.back)))):
+            newback = self.back[i]*a+carry
+            carry = newback//10
+            newback = newback%10
+            rb.append(newback)
+        rf = []
+        for i in list(reversed(range(len(self.front)))):
+            newfront = self.front[i]*a+carry
+            carry = newfront//10
+            newfront = newfront%10
+            rf.append(newfront)
+        if carry >0:
+            rf.append(carry)
+        rb.reverse()
+        rf.reverse()
+        return bigfloat(-1 if (a<0 or self.sign == -1) and not (self.sign==-1 and a<0) else 0,rf,rb,max(len(rf),len(rb)))
     def __sub__(self,other):
         self.fix(other)
         if self.sign == other.sign and self.sign == 0:
@@ -97,12 +127,16 @@ class bigfloat:
                     rf.append(newval)
                 rb.reverse()
                 rf.reverse()
-                return bigfloat(0,rf,rb,self.prec)
+                return bigfloat(0,rf,rb,max(len(rf),len(rb)))
             elif self<other:
                 new = other-self
                 return bigfloat(-1,new.front,new.back,new.prec)
             else:
-                pass
+                return bigfloat(0,[0],[0],1)
+        elif self.sign == other.sign and self.sign == -1:
+            new = other + self
+            return bigfloat(-1,new.front,new.back,new.prec)
+        
 def parse(string):
         sign = 0
         if(string[0] == "-"):
@@ -117,7 +151,7 @@ def parse(string):
             front = [int(x) for x in list(treated.split(".")[0])]
             back = [int(x) for x in list(treated.split(".")[1])]
             prec = max(len(front),len(back))
-            front+= [0]*(prec-len(front))
+            front= [0]*(prec-len(front)) + front
             back+= ([0]*(prec-len(back)))
             
         elif len(re.findall("\.",treated)) == 0:
@@ -127,7 +161,7 @@ def parse(string):
         front = [x for x in front if x != []]
         back = [x for x in back if x !=[]]
         return bigfloat(sign,front,back,prec)
-print(parse("423789412847491274.321")-parse("1234234.45234236"))
+print(parse("123.456").smul(9))
 class Large:
     def __init__(self,sign,value,m=1):
         self.sign = sign
