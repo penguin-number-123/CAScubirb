@@ -1,7 +1,7 @@
 use std::io::{stdin,stdout,Write};
 
 fn main() {
-    println!("CAScubirb CLI Interfact - V0.0.0 ");
+    println!("CAScubirb CLI Interface - V0.0.0 ");
     let mut count = 0;
     loop{
         let mut s=String::new();
@@ -14,10 +14,13 @@ fn main() {
         if let Some('\r')=s.chars().next_back() {
             s.pop();
         }
-        if(s == "exit".to_string()) {std::process::exit(0);}
-        println!("Out[{}]: {}",count,s);
-
+        if s == "exit" || s=="Exit"{
+            std::process::exit(0);
+        }else{
+            println!("Out[{}]: {}",count,s);
+        }
         count += 1;
+        
     }
 
 }
