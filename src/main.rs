@@ -1,5 +1,5 @@
 use std::io::{stdin,stdout,Write};
-
+mod arbitary;
 fn main() {
     println!("CAScubirb CLI Interface - V0.0.0 ");
     let mut count = 0;

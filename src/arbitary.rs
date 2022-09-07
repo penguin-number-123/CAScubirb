@@ -1,11 +1,14 @@
-struct bigfloat{
-    sign: i32
-    front: Vec<i32>
-    back: Vec<i32>
+
+use std::cmp;
+pub struct BigFloat{
+    sign: i32,
+    front: Vec<i32>,
+    back: Vec<i32>,
     prec:i64
 }
-impl bigfloat{
-    fn main(sign: i32) -> Self{
-        bigfloat{sign,back}
+ impl BigFloat{
+    fn new(sign: i32,front: Vec<i32>,back: Vec<i32>) -> Self{
+        let p = cmp::max(front.len(),back.len()) as i64;
+        BigFloat{sign,front,back,prec:p}
     }
 }
