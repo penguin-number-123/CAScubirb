@@ -14,11 +14,17 @@ fn main() {
         if let Some('\r')=s.chars().next_back() {
             s.pop();
         }
+<<<<<<< Updated upstream
         if s == "exit" || s=="Exit"{
             std::process::exit(0);
         }else{
             println!("Out[{}]: {}",count,s);
         }
+=======
+        if s == "exit".to_string() {std::process::exit(0);}
+        println!("Out[{}]: {}",count,s);
+
+>>>>>>> Stashed changes
         count += 1;
         
     }
