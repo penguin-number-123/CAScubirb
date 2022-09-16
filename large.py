@@ -22,7 +22,7 @@ class bigfloat:
             self.back+= [0]*(other.prec-self.prec)
             self.prec=other.prec
     def false_div(a,x):
-        return bigfloat("0."+"0"*(x-1)+str(a))
+        return parse("0."+"0"*(x-1)+str(a))
     def __gt__(self,other):
         self.fix(other)
         if self.sign != other.sign:
@@ -43,8 +43,11 @@ class bigfloat:
         return not self > other
     def __add__(self,other):
         self.fix(other)
+        carry = 0
+        rb = []
+        rf = []
         if(self.sign == other.sign):
-            rb = []
+            
             for i in list(reversed(range(len(self.back)))):
                 newval = self.back[i]+other.back[i]
                 carry = newval//10
@@ -57,7 +60,7 @@ class bigfloat:
             if carry > 0:
                 rf.append(carry)
             rb.reverse()
-            rf = []
+            
             for i in list(reversed(range(len(self.front)))):
                 newval = self.front[i]+other.front[i]
                 carry = newval//10
@@ -161,7 +164,7 @@ def parse(string):
         front = [x for x in front if x != []]
         back = [x for x in back if x !=[]]
         return bigfloat(sign,front,back,prec)
-print(parse("123.456").smul(9))
+print(parse("109876543210000").smul(9))
 class Large:
     def __init__(self,sign,value,m=1):
         self.sign = sign
