@@ -22,7 +22,7 @@ class bigfloat:
             self.back+= [0]*(other.prec-self.prec)
             self.prec=other.prec
     def false_div(a,x):
-        return bigfloat("0."+"0"*(x-1)+str(a))
+        return parse("0."+"0"*(x-1)+str(a))
     def __gt__(self,other):
         self.fix(other)
         if self.sign != other.sign:
@@ -43,8 +43,11 @@ class bigfloat:
         return not self > other
     def __add__(self,other):
         self.fix(other)
+        carry = 0
+        rb = []
+        rf = []
         if(self.sign == other.sign):
-            rb = []
+            
             for i in list(reversed(range(len(self.back)))):
                 newval = self.back[i]+other.back[i]
                 carry = newval//10
@@ -57,7 +60,7 @@ class bigfloat:
             if carry > 0:
                 rf.append(carry)
             rb.reverse()
-            rf = []
+            
             for i in list(reversed(range(len(self.front)))):
                 newval = self.front[i]+other.front[i]
                 carry = newval//10
@@ -84,6 +87,8 @@ class bigfloat:
         self.back = final
         return self
 
+    def size(self):
+        return len([x for x in self.front if x !=0])+len([x for x in self.back if x !=0])
     def smul(self,a):
         rb = []
         carry = 0//10
@@ -136,7 +141,25 @@ class bigfloat:
         elif self.sign == other.sign and self.sign == -1:
             new = other + self
             return bigfloat(-1,new.front,new.back,new.prec)
+    def splitat(self,n):
+        comb = self.front+self.back
+        return bigfloat(0,comb[:n],[0],len(comb[:n])),bigfloat(0,comb[n:],[0],len(comb[n:]))
+    
+    def mul(self,other,shift,sign=0):
+        if self<bigfloat(0,[1,0],[0,0],2):
+            return other.smul(self.tosdigit())
+        elif  other<bigfloat(0,[1,0],[0,0],2):
+            return self.smul(other.tosdigit())
+        m = max(self.size(),other.size())
+        m2 = int(math.ceil(m/2.0))
+        m = m if m % 2 == 0 else m + 1
+        a,b = self.splitat(m2)
+        c,d = self.splitat(m2)
+        ac = a.mul(c,len([x for x in a if x!=0])+len([x for x in c if x!=0]))
+        bd = b.mul(d,len([x for x in d if x!=0])+len([x for x in b if x!=0]))
         
+
+
 def parse(string):
         sign = 0
         if(string[0] == "-"):
@@ -161,7 +184,7 @@ def parse(string):
         front = [x for x in front if x != []]
         back = [x for x in back if x !=[]]
         return bigfloat(sign,front,back,prec)
-print(parse("123.456").smul(9))
+print(parse("109876543210000").smul(9))
 class Large:
     def __init__(self,sign,value,m=1):
         self.sign = sign
