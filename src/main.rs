@@ -2,7 +2,7 @@ use std::io::{stdin,stdout,Write};
 mod arbitary;
 fn main() {
     println!("CAScubirb CLI Interface - V0.0.0 ");
-    let mut count = 0;
+    let mut count:i32 = 0;
     loop{
         let mut s=String::new();
         print!("In[{}]:= ",count);
@@ -16,11 +16,16 @@ fn main() {
         }
 
         if s == "exit" || s=="Exit"{
+            println!("Out[{}]: Ending session...",count);
             std::process::exit(0);
-        }else{
+        }else if s=="birb birb"{
+            println!("Out[{}]: Birb birb (^)>",count);
+            std::process::exit(0);
+        }
+        else{
             println!("Out[{}]: {}",count,s);
         }
-        println!("Out[{}]: {}",count,s);
+        
         count += 1;
         
     }
