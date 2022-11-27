@@ -4,7 +4,7 @@ fn main() {
     println!("CAScubirb CLI Interface - V0.0.0 ");
     let mut count:i32 = 0;
     let mut count = 0;
-    let a:arbitary::BigFloat = arbitary::BigFloat::new(0,Vec![0,1],Vec![0,0]);
+    let a:arbitary::BigFloat = arbitary::BigFloat::instant(0,vec![0,1],vec![0,0]);
 
     loop{
         let mut s=String::new();
