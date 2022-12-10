@@ -8,8 +8,8 @@ pub struct BigFloat{
     prec:i64
 }
 
- impl BigFloat{
-    pub fn instant(sign: i32,front: Vec<i32>,back: Vec<i32>) -> Self{
+impl BigFloat{
+    pub fn instance(sign: i32,front: Vec<i32>,back: Vec<i32>) -> Self{
         let p = cmp::max(front.len(),back.len()) as i64;
         BigFloat{sign,
             front,
@@ -23,15 +23,15 @@ pub struct BigFloat{
             prec:1}
     }
     fn fix(a:BigFloat,b:BigFloat) -> (BigFloat,BigFloat){
-        let mut ma:BigFloat;
-        let mut mb:BigFloat;
+        let mut ma:BigFloat = Self::instance(0,vec![0],vec![0]);
+        let mut mb:BigFloat= Self::instance(0,vec![0],vec![0]);
         let mut bk= vec![0;(a.prec-b.prec) as usize];
         if a.prec>b.prec{
             bk.append(&mut vec![b.front[0]]);
             mb.front = bk;
             mb.back.append(&mut vec![0;(a.prec-b.prec) as usize]);
         }
-        else if (a.prec<b.prec) {
+        else if a.prec<b.prec {
             bk.append(&mut vec![a.front[0]]);
             ma.back = bk;
             ma.front.append(&mut vec![0;(b.prec-a.prec) as usize]);
@@ -47,6 +47,22 @@ pub struct BigFloat{
             return false
         }
         return true
+    }
+    fn gt(a:BigFloat,b:BigFloat) -> bool{
+        if a.sign < b.sign{
+            return false;
+        }
+        for i in 0..(a.back.len()){
+            if a.back[i] < b.back[i]{
+                return false;
+            }
+        }
+        for i in 0..(a.front.len() ){
+            if a.front[i] < b.front[i]{
+                return false;
+            }
+        }
+        return true;
     }
     // def fix(self,other):
         // if self.prec > other.prec:
