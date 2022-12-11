@@ -16,7 +16,7 @@ impl BigFloat{
             back,
             prec:p}
     }
-    pub fn Zero() -> BigFloat{
+    pub fn zero() -> BigFloat{
         BigFloat{sign:0,
             front: vec![0],
             back: vec![0],
@@ -29,15 +29,23 @@ impl BigFloat{
         if a.prec>b.prec{
             bk.append(&mut vec![b.front[0]]);
             mb.front = bk;
-            mb.back.append(&mut vec![0;(a.prec-b.prec) as usize]);
+            vec![0;(a.prec-b.prec) as usize].append(&mut mb.back);
         }
         else if a.prec<b.prec {
             bk.append(&mut vec![a.front[0]]);
             ma.back = bk;
-            ma.front.append(&mut vec![0;(b.prec-a.prec) as usize]);
+            let zeroes = vec![0;(b.prec-a.prec) as usize];
+            ma.front = zeroes.append(&mut a.front);
 
         }
         (ma,mb)
+    }
+    fn clamp(a:BigFloat){
+        let mut ma = BigFloat::zero();
+        if(a.back.len() > a.front.len()){
+            let zeroes = vec![0;(a.back.len() - a.front.len()) as usize];
+            ma.front = zeroes.append(&mut a.front.clone());
+        }
     }
     fn eq(a:BigFloat,b:BigFloat) -> bool{
         if a.front !=b.front{
@@ -63,6 +71,9 @@ impl BigFloat{
             }
         }
         return true;
+    }
+    fn lt(a:BigFloat,b:BigFloat) -> bool{
+        return !Self::gt(a,b)
     }
     // def fix(self,other):
         // if self.prec > other.prec:
