@@ -44,6 +44,7 @@ struct Atom{
     quark2:Box<dyn value>,
     operand:i32, // * / //  etc.
 }
+
 struct Term{
     sign:bool,
     data:Vec<Atom>,

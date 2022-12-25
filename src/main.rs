@@ -1,11 +1,14 @@
 use std::io::{stdin,stdout,Write};
 mod arbitary;
+use crossterm;
 fn main() {
-    println!("CAScubirb CLI Interface - V0.0.0 ");
     let mut count:i32 = 0;
     let mut count = 0;
     let a:arbitary::BigFloat = arbitary::BigFloat::instance(0,vec![0,1],vec![0,0]);
-
+    let size = crossterm::terminal::size();
+    let clen = size.as_ref().unwrap().0 - 2 ;
+    let rlen = size.as_ref().unwrap().1;
+    println!("┌{:─^width$}┐","CAScubirb CLI Interface - V0.0.0",width = usize::try_from(clen).ok().unwrap());
     loop{
         let mut s=String::new();
         print!("In[{}]:= ",count);

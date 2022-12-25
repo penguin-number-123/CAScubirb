@@ -22,6 +22,8 @@ impl BigFloat{
             back: vec![0],
             prec:1}
     }
+    //TODO:
+    //Fix the array fusion and reassignment
     fn fix(a:BigFloat,b:BigFloat) -> (BigFloat,BigFloat){
         let mut ma:BigFloat = Self::instance(0,vec![0],vec![0]);
         let mut mb:BigFloat= Self::instance(0,vec![0],vec![0]);
@@ -34,19 +36,18 @@ impl BigFloat{
         else if a.prec<b.prec {
             bk.append(&mut vec![a.front[0]]);
             ma.back = bk;
-            let zeroes = vec![0;(b.prec-a.prec) as usize];
+            let mut zeroes = vec![0;(b.prec-a.prec) as usize];
             ma.front = zeroes.append(&mut a.front);
-
         }
         (ma,mb)
     }
-    fn clamp(a:BigFloat){
-        let mut ma = BigFloat::zero();
-        if(a.back.len() > a.front.len()){
-            let zeroes = vec![0;(a.back.len() - a.front.len()) as usize];
-            ma.front = zeroes.append(&mut a.front.clone());
-        }
-    }
+    //fn clamp(a:BigFloat){
+    //    let mut ma = BigFloat::zero();
+    //    if(a.back.len() > a.front.len()){
+    //        let mut zeroes = &vec![0;(a.back.len() - a.front.len()) as usize];
+    //        ma.front = zeroes.append(&mut a.front);
+    //    }
+    //}
     fn eq(a:BigFloat,b:BigFloat) -> bool{
         if a.front !=b.front{
             return false
@@ -74,6 +75,9 @@ impl BigFloat{
     }
     fn lt(a:BigFloat,b:BigFloat) -> bool{
         return !Self::gt(a,b)
+    }
+    fn add(a:BigFloat,b:BigFloat){
+        
     }
     // def fix(self,other):
         // if self.prec > other.prec:
