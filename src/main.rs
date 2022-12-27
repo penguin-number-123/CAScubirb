@@ -1,10 +1,14 @@
 use std::io::{stdin,stdout,Write};
 mod arbitary;
+
 use crossterm;
 fn main() {
-    let mut count:i32 = 0;
+    let count:i32 = 0;
     let mut count = 0;
-    let a:arbitary::BigFloat = arbitary::BigFloat::instance(0,vec![0,1],vec![0,0]);
+    let mut a:arbitary::BigFloat = arbitary::BigFloat::instance(0,vec![0,1],vec![0,0]);
+    let mut b:arbitary::BigFloat = arbitary::BigFloat::instance(0,vec![0,0,0],vec![0,0,1]);
+    (a,b) = arbitary::BigFloat::fix(a,b);
+    println!("{:?} {:?}",a,b);
     let size = crossterm::terminal::size();
     let clen = size.as_ref().unwrap().0 - 2 ;
     let rlen = size.as_ref().unwrap().1;

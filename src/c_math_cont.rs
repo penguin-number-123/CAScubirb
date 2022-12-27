@@ -1,14 +1,27 @@
 use arbitary::BigFloat;
 struct Num{
     num:BigFloat,
+    base:i32
 }
 
 impl Num{
-    fn new(num:BigFloat) -> Self{
-        Num{num:num}
+    fn new(num:BigFloat,base:i32) -> Self{
+        Num{num:num,base:base};
     }
     fn value(&self) -> &BigFloat{
         &self.num
+    }
+}
+struct Complex{
+    real:Num,
+    imaginary:Num
+}
+impl Complex{
+    fn new(real:Num,imaginary:Num) -> Self{
+        Complex{real:real,imaginary:imaginary};
+    }
+    fn value(&self) -> (&Num,&Num){
+        (&self.real,&self.complex)
     }
 }
 struct Const{
