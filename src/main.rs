@@ -5,10 +5,9 @@ use crossterm;
 fn main() {
     let count:i32 = 0;
     let mut count = 0;
-    let mut a:arbitary::BigFloat = arbitary::BigFloat::instance(0,vec![0,1],vec![0,0]);
-    let mut b:arbitary::BigFloat = arbitary::BigFloat::instance(0,vec![0,0,0],vec![0,0,1]);
-    (a,b) = arbitary::BigFloat::fix(a,b);
-    println!("{:?} {:?}",a,b);
+    let mut a = arbitary::BigFloat::instance(0,vec![0,0,1],vec![1,0,0]);
+    a = a.trunc();
+
     let size = crossterm::terminal::size();
     let clen = size.as_ref().unwrap().0 - 2 ;
     let rlen = size.as_ref().unwrap().1;
