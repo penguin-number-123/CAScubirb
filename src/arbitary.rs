@@ -1,5 +1,6 @@
 
 use std::{cmp, sync::Arc};
+use std::thread;
 //printing
 #[derive(Debug)]
 //reduce warnings, nothing serious.
@@ -196,12 +197,39 @@ pub struct BigFloat{
     /**Add
      * 
      */
-    fn add(mut a:BigFloat,mut b:BigFloat){
+    fn add(mut a:BigFloat,mut b:BigFloat) -> BigFloat{
+        let res = BigFloat::zero();
+        let mut cthrough = 0;
         (a,b) = BigFloat::fix(a,b);
-
+        let mut tmpaf = a.front.clone();
+        let tmpbf = b.front.clone();
+        //normalize
         if(a.sign == b.sign){
             //a = -x, b = -y, a+b = -(x+y)
+            for i in 0..a.back.len(){
+                a.back[i]+=b.back[i];
+            }
+            let frnt = thread::spawn(move ||{
+                for i in 0..a.front.len(){
+                    tmpaf[i]+=tmpbf[i];
+                }
+                tmpaf
+            });
+            a.front = frnt.join().unwrap();
+            for i in 0..a.back.len(){
+                if(a.back[i]>10){
+                    a.back[i] = a.back[i]%10;
+                    if(i<a.back.len()){
+                        a.back[i+1] = a.back[i+1]+a.back[i]/10;
+                    }else{
+                        cthrough = a.back[i]/10;
+                    }
+                }
+            }
             
+           return BigFloat::instance(a.sign, a.front.clone(), a.back);
+        }else{
+            return BigFloat::zero()
         }
     }
     // def fix(self,other):
