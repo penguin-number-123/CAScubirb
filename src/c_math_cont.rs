@@ -1,12 +1,13 @@
-use arbitary::BigFloat;
+use crate::arbitary::BigFloat;
+
 struct Num{
     num:BigFloat,
     base:i32
 }
 
 impl Num{
-    fn new(num:BigFloat,base:i32) -> Self{
-        Num{num:num,base:base};
+    fn new(num:BigFloat,base:i32) -> Num{
+        return Num{num:num,base:base};
     }
     fn value(&self) -> &BigFloat{
         &self.num
@@ -18,10 +19,7 @@ struct Complex{
 }
 impl Complex{
     fn new(real:Num,imaginary:Num) -> Self{
-        Complex{real:real,imaginary:imaginary};
-    }
-    fn value(&self) -> (&Num,&Num){
-        (&self.real,&self.complex)
+        return Complex{real:real,imaginary:imaginary};
     }
 }
 struct Const{
@@ -36,45 +34,36 @@ impl Const{
         &self.value
     }
 }
-struct cconst{
+struct Cconst{
     c:Const,
     coeff:BigFloat,
 }
 
-impl cconst{
+impl Cconst{
     fn new(c:Const,coeff:BigFloat) -> Self{
-        cconst{c:c,coeff:coeff};
-    }
-    fn value(&self) -> &BigFloat{
-        c.value()*coeff
+       return Cconst{c:c,coeff:coeff};
     }
 
 }
-
-
-struct Atom{
-    quark1:Box<dyn value>,
-    quark2:Box<dyn value>,
-    operand:i32, // * / // ^ etc.
+struct Var{
+    name:String,
 }
-//-> (+) sin(2*pi)*a
-// sin(2*pi)
-//     Func:
-//      Name: sin
-//          inputs:
-//           2pi
-// a
-//Op: *
+enum Atom{
+   Num(Num),
+   Complex(Complex),
+   Var(Var),
+   Cconst(Cconst),
+   Const(Const),
+
+}
+struct Egg{
+    atom:Atom,
+    atom2:Atom,
+    op:i32
+}
 struct Term{
-    sign:bool,
-    data:Vec<Atom>,
+    term:Egg
 }
-
-//i.e. sin(2*pi)*a+2ab-c^2
-//-> (+) sin(2*pi)*a
-//   (+) 2*a*b
-//   (-) c^2
 struct Expr{
-    data:Vec<Term>,
+    expression:Vec<Term>
 }
-

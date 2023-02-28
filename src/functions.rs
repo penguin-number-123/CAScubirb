@@ -1,4 +1,4 @@
-mod arbitary;
+mod functions;
 pub struct func{
     name: String,
     inputs: Vec<BigFloat>
