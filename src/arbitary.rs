@@ -329,8 +329,20 @@ pub struct BigFloat{
             if BigFloat::unsigneq(a,b) {
                 return BigFloat::zero();
             }
-            //TODO
-            return BigFloat::zero();
+            
+        }
+    }
+    pub fn sub(&a,&b) -> BigFloat{
+        if a.sign == b.sign && !a.sign{
+            for i in 0..a.back.len(){
+                if i < b.back.len(){
+                    a.back[i] -= b.back[i];
+                }
+            }
+            let borrow_flag = a.back[0] < 0
+            if borrow_flag{
+                a.front[a.front.len()-1] -= 1
+            }
         }
     }
     // def fix(self,other):
