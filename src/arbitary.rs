@@ -16,6 +16,7 @@ pub struct BigFloat{
 
 
 impl BigFloat{
+    pub const MAX_SIZE:i128 = 1_000_000_000;
     const MUL_TABLE: [[[i32;2];10];10] = [
         [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
         [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]],
@@ -38,7 +39,7 @@ impl BigFloat{
             back,
             prec:p}
     }
-    pub fn fromStr(s: &str) -> BigFloat{
+    pub fn FromStr(s: &str) -> BigFloat{
         if s != ""{
             let sign = if (s.chars().nth(0).unwrap() != '-') { 0 } else { -1 };
             let k = s.replace("-","").replace("+","");
@@ -46,6 +47,9 @@ impl BigFloat{
             println!("{:?}",a);
             let front = a[0].chars().map(|x| x.to_string().parse::<i32>().unwrap()).collect::<Vec<i32>>();
             let back = a[1].chars().map(|x| x.to_string().parse::<i32>().unwrap()).collect::<Vec<i32>>();
+            if (front.len()+back.len()) as i128 >BigFloat::MAX_SIZE {
+
+            }
             let prec =  cmp::max(front.len(),back.len()) as i64;
             return BigFloat{sign,
             front,
