@@ -15,7 +15,23 @@ pub struct BigFloat{
 }
 
 
- impl BigFloat{
+impl BigFloat{
+    pub const MAX_SIZE:i128 = 1_000_000_000;
+    const MUL_TABLE: [[[i32;2];10];10] = [
+        [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
+        [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9]],
+        [[0,0],[0,2],[0,4],[0,6],[0,8],[1,0],[1,2],[1,4],[1,6],[1,8]],
+        [[0,0],[0,3],[0,6],[0,9],[1,2],[1,5],[1,8],[2,1],[2,4],[2,7]],
+        [[0,0],[0,4],[0,8],[1,2],[1,6],[2,0],[2,4],[2,8],[3,2],[3,6]],
+        [[0,0],[0,5],[1,0],[1,5],[2,0],[2,5],[3,0],[3,5],[4,0],[4,5]],
+        [[0,0],[0,6],[1,2],[1,8],[1,2],[1,5],[1,8],[2,1],[2,4],[2,7]],
+        [[0,0],[0,7],[1,4],[2,1],[2,8],[3,0],[4,2],[4,9],[5,6],[6,3]],
+        [[0,0],[0,8],[1,6],[2,4],[3,2],[4,0],[4,8],[5,6],[6,4],[7,2]],
+        [[0,0],[0,9],[1,8],[2,7],[3,6],[4,5],[5,4],[6,3],[7,2],[8,1]],
+        ];
+    //Add sin, cos table later. We can use the formula sin(a+b) = sin(a)cos(b)+cos(a)sin(b).
+    //Notice that for a clever choice of b we can do good calculations.
+
     pub fn instance(sign: i32,front: Vec<i32>,back: Vec<i32>) -> Self{
         let p = cmp::max(front.len(),back.len()) as i64;
         BigFloat{sign,
@@ -23,7 +39,7 @@ pub struct BigFloat{
             back,
             prec:p}
     }
-    pub fn fromStr(s: &str) -> BigFloat{
+    pub fn FromStr(s: &str) -> BigFloat{
         if s != ""{
             let sign = if (s.chars().nth(0).unwrap() != '-') { 0 } else { -1 };
             let k = s.replace("-","").replace("+","");
@@ -31,6 +47,9 @@ pub struct BigFloat{
             println!("{:?}",a);
             let front = a[0].chars().map(|x| x.to_string().parse::<i32>().unwrap()).collect::<Vec<i32>>();
             let back = a[1].chars().map(|x| x.to_string().parse::<i32>().unwrap()).collect::<Vec<i32>>();
+            if (front.len()+back.len()) as i128 >BigFloat::MAX_SIZE {
+
+            }
             let prec =  cmp::max(front.len(),back.len()) as i64;
             return BigFloat{sign,
             front,
@@ -343,6 +362,74 @@ pub struct BigFloat{
             if borrow_flag{
                 a.front[a.front.len()-1] -= 1
             }
+        }
+    }
+    /**Add
+     * Adds a and b
+     * 
+     * 
+     * 
+     */
+    pub fn sub(mut a:BigFloat,mut b:BigFloat) -> BigFloat{
+        
+        let mut cthrough = 0;
+        //We don't need this since we handle the len diff by just not adding.
+        //(a,b) = BigFloat::fix(a,b);
+        
+        //normalize
+        if a.sign == b.sign {
+            //a = -x, b = -y, a+b = -(x+y)
+           
+            if(a.back.len()>b.back.len()){
+                for i in 0..b.back.len(){
+                    a.back[i]+=b.back[i];
+                }
+            }else{
+                for i in 0..a.back.len(){
+                    b.back[i]+=a.back[i];
+                }
+                a.back = b.back;
+            }
+                for i in 0..a.front.len(){
+                    a.front[i]+=b.front[i];
+            }
+             for i in 0..a.back.len(){
+
+                if(a.back[i]>=10){
+                    if i==0 {
+                        cthrough = a.back[i]/10;
+
+                    }else{
+                        a.back[i-1] += a.back[i]/10;
+                    }
+                    a.back[i] = a.back[i] % 10;
+
+                }
+            }
+
+            let alen = a.front.len()-1;
+            a.front[alen] += cthrough;
+            for j in 0..alen{
+                if(a.front[alen-j]>=10){
+
+                    if alen-j>0 {
+                        a.front[alen-j-1] += a.front[alen-j]/10;
+                        a.front[alen-j] = a.front[alen-j]%10
+                    }
+                    
+                }
+            }
+            a.front.insert(0,a.front[0]/10);
+            a.front[1] = a.front[1]%10;
+            a.prec = cmp::max(a.front.len(),a.back.len()) as i64;
+           return a;
+        }else{
+            //a + -a = 0, since we know the two signs must be different, as long as the absolute value is the same they cancel out.
+            if BigFloat::unsigneq(a,b) {
+                return BigFloat::zero();
+            }
+            //TODO
+            return BigFloat::zero();
         }
     }
     // def fix(self,other):

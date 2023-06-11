@@ -30,7 +30,6 @@ fn main() {
     println!("┌{:─^width$}┐","CAScubirb CLI Interface - V0.0.0",width = usize::try_from(clen).ok().unwrap());
     terminal::enable_raw_mode().expect("Could not turn on Raw mode");
     count = 0;
-    /* add the following */
     loop {
         if let Event::Key(event) = event::read().expect("Failed to read line") {
             match event {
