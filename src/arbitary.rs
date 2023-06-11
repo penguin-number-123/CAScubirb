@@ -232,7 +232,7 @@ impl BigFloat{
         self = BigFloat::clamp(self);
         let mut max_zeroes = 0;
         for i in 0..self.front.len(){
-            if(self.front[i] == self.back[self.back.len()-1-i] && max_zeroes+1 <self.front.len()){
+            if(self.front[i] == self.back[self.back.len()-1-i] && self.front[i] == 0 && max_zeroes+1 <self.front.len()){
                 max_zeroes+=1;             
             }else{
                 break;
